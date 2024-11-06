@@ -1,161 +1,133 @@
-/* add your code here */
+document.addEventListener('DOMContentLoaded', function () {
+    const users = [
+        { id: 1, firstname: 'John', lastname: 'Doe', address: '123 Main St', city: 'Anytown', email: 'john.doe@example.com' },
+        { id: 2, firstname: 'Jane', lastname: 'Smith', address: '456 Oak St', city: 'Othertown', email: 'jane.smith@example.com' }
+    ];
 
-// Add your code here
+    const userListElement = document.querySelector('.user-list');
+    const form = document.querySelector('.userEntry');
+    const btnSave = document.getElementById('btnSave');
+    const btnDelete = document.getElementById('btnDelete');
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Sample data for stock and user content (replace with actual data or API calls)
-    const stockContent = `[
-        {"symbol": "AAPL", "name": "Apple Inc.", "sector": "Technology", "subIndustry": "Consumer Electronics", "address": "Cupertino, CA"},
-        {"symbol": "GOOGL", "name": "Alphabet Inc.", "sector": "Technology", "subIndustry": "Internet Services", "address": "Mountain View, CA"}
-    ]`;
+    const userIDField = document.getElementById('userID');
+    const firstnameField = document.getElementById('firstname');
+    const lastnameField = document.getElementById('lastname');
+    const addressField = document.getElementById('address');
+    const cityField = document.getElementById('city');
+    const emailField = document.getElementById('email');
 
-    const userContent = `[
-        {
-            "id": 1,
-            "user": {
-                "firstname": "John",
-                "lastname": "Doe",
-                "address": "123 Main St",
-                "city": "New York",
-                "email": "john@example.com"
-            },
-            "portfolio": [
-                {"symbol": "AAPL", "owned": 50},
-                {"symbol": "GOOGL", "owned": 10}
-            ]
-        },
-        {
-            "id": 2,
-            "user": {
-                "firstname": "Jane",
-                "lastname": "Smith",
-                "address": "456 Oak St",
-                "city": "San Francisco",
-                "email": "jane@example.com"
-            },
-            "portfolio": [
-                {"symbol": "GOOGL", "owned": 20}
-            ]
+    const portfolioListElement = document.querySelector('.portfolio-list');
+    const stockLogo = document.getElementById('logo');
+    const stockName = document.getElementById('stockName');
+    const stockSector = document.getElementById('stockSector');
+    const stockIndustry = document.getElementById('stockIndustry');
+    const stockAddress = document.getElementById('stockAddress');
+
+    let selectedUser = null;
+
+    // Load the user list on the left panel
+    function loadUserList() {
+        userListElement.innerHTML = '';
+        users.forEach(user => {
+            const li = document.createElement('li');
+            li.textContent = `${user.firstname} ${user.lastname}`;
+            li.addEventListener('click', () => selectUser(user.id));
+            userListElement.appendChild(li);
+        });
+    }
+
+    // Function to select a user and load the form with their details
+    function selectUser(userId) {
+        selectedUser = users.find(user => user.id === userId);
+        if (selectedUser) {
+            userIDField.value = selectedUser.id;
+            firstnameField.value = selectedUser.firstname;
+            lastnameField.value = selectedUser.lastname;
+            addressField.value = selectedUser.address;
+            cityField.value = selectedUser.city;
+            emailField.value = selectedUser.email;
+            loadPortfolio(selectedUser.id);
         }
-    ]`;
+    }
 
-    const stocksData = JSON.parse(stockContent);
-    let userData = JSON.parse(userContent);
-    
-    const deleteButton = document.querySelector('#btnDelete');
-    const saveButton = document.querySelector('#btnSave');
-
-    // Generate initial user list
-    generateUserList(userData, stocksData);
-
-    // Handle delete user action
-    deleteButton.addEventListener('click', (event) => {
+    // Save button functionality
+    btnSave.addEventListener('click', function (event) {
         event.preventDefault();
-        const userId = document.querySelector('#userID').value;
-        const userIndex = userData.findIndex(user => user.id == userId);
-        if (userIndex !== -1) {
-            userData.splice(userIndex, 1); // Remove user from data
-            generateUserList(userData, stocksData); // Re-render user list
+        const userId = parseInt(userIDField.value);
+        if (selectedUser) {
+            // Update existing user
+            selectedUser.firstname = firstnameField.value;
+            selectedUser.lastname = lastnameField.value;
+            selectedUser.address = addressField.value;
+            selectedUser.city = cityField.value;
+            selectedUser.email = emailField.value;
+        } else {
+            // Add new user
+            const newUser = {
+                id: users.length + 1,
+                firstname: firstnameField.value,
+                lastname: lastnameField.value,
+                address: addressField.value,
+                city: cityField.value,
+                email: emailField.value
+            };
+            users.push(newUser);
+            selectedUser = newUser;
+        }
+        loadUserList();
+        form.reset();
+        selectedUser = null;
+    });
+
+    // Delete button functionality
+    btnDelete.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (selectedUser) {
+            const index = users.findIndex(user => user.id === selectedUser.id);
+            users.splice(index, 1);
+            loadUserList();
+            form.reset();
+            selectedUser = null;
+            portfolioListElement.innerHTML = '';  // Clear portfolio
         }
     });
 
-    // Handle save/update user action
-    saveButton.addEventListener('click', (event) => {
-        event.preventDefault();
+    // Dummy portfolio data
+    const portfolios = {
+        1: [
+            { symbol: 'AAPL', shares: 10, logo: 'https://logo.clearbit.com/apple.com', name: 'Apple Inc.', sector: 'Technology', industry: 'Consumer Electronics', address: 'Cupertino, CA' },
+            { symbol: 'MSFT', shares: 5, logo: 'https://logo.clearbit.com/microsoft.com', name: 'Microsoft Corporation', sector: 'Technology', industry: 'Software', address: 'Redmond, WA' }
+        ],
+        2: [
+            { symbol: 'GOOGL', shares: 8, logo: 'https://logo.clearbit.com/google.com', name: 'Google LLC', sector: 'Technology', industry: 'Search Engines', address: 'Mountain View, CA' }
+        ]
+    };
 
-        const id = document.querySelector('#userID').value;
-        const userIndex = userData.findIndex(user => user.id == id);
-
-        if (userIndex !== -1) {
-            // Update the user information with form data
-            userData[userIndex].user.firstname = document.querySelector('#firstname').value;
-            userData[userIndex].user.lastname = document.querySelector('#lastname').value;
-            userData[userIndex].user.address = document.querySelector('#address').value;
-            userData[userIndex].user.city = document.querySelector('#city').value;
-            userData[userIndex].user.email = document.querySelector('#email').value;
-
-            generateUserList(userData, stocksData); // Re-render updated user list
-        }
-    });
-
-    // Generate user list dynamically
-    function generateUserList(users, stocks) {
-        const userList = document.querySelector('.user-list');
-        userList.innerHTML = ''; // Clear existing list
-
-        users.forEach(({ user, id }) => {
-            const listItem = document.createElement('li');
-            listItem.innerText = `${user.lastname}, ${user.firstname}`;
-            listItem.setAttribute('id', id);
-            userList.appendChild(listItem);
-        });
-
-        userList.addEventListener('click', (event) => handleUserListClick(event, users, stocks));
-    }
-
-    // Handle clicking on a user from the list
-    function handleUserListClick(event, users, stocks) {
-        const userId = event.target.id;
-        const user = users.find(user => user.id == userId);
-        if (user) {
-            populateForm(user); // Fill form with selected user details
-            renderPortfolio(user, stocks); // Display user's stock portfolio
-        }
-    }
-
-    // Populate user form with selected user data
-    function populateForm(data) {
-        const { user, id } = data;
-        document.querySelector('#userID').value = id;
-        document.querySelector('#firstname').value = user.firstname;
-        document.querySelector('#lastname').value = user.lastname;
-        document.querySelector('#address').value = user.address;
-        document.querySelector('#city').value = user.city;
-        document.querySelector('#email').value = user.email;
-    }
-
-    // Render user's portfolio (list of stocks they own)
-    function renderPortfolio(user, stocks) {
-        const { portfolio } = user;
-        const portfolioDetails = document.querySelector('.portfolio-list');
-        portfolioDetails.innerHTML = ''; // Clear previous portfolio
-
-        portfolio.forEach(({ symbol, owned }) => {
-            const symbolEl = document.createElement('p');
-            const sharesEl = document.createElement('p');
-            const actionEl = document.createElement('button');
-
-            symbolEl.innerText = `Stock: ${symbol}`;
-            sharesEl.innerText = `Shares Owned: ${owned}`;
-            actionEl.innerText = 'View';
-            actionEl.setAttribute('id', symbol);
-
-            portfolioDetails.appendChild(symbolEl);
-            portfolioDetails.appendChild(sharesEl);
-            portfolioDetails.appendChild(actionEl);
-        });
-
-        // Handle view stock button click
-        portfolioDetails.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON') {
-                viewStock(event.target.id, stocks);
-            }
+    // Load portfolio for the selected user
+    function loadPortfolio(userId) {
+        const userPortfolio = portfolios[userId] || [];
+        portfolioListElement.innerHTML = '';
+        userPortfolio.forEach(stock => {
+            const stockRow = document.createElement('div');
+            stockRow.innerHTML = `
+                <p>${stock.symbol}</p>
+                <p>${stock.shares}</p>
+                <button class="view-details">View</button>
+            `;
+            stockRow.querySelector('.view-details').addEventListener('click', () => showStockDetails(stock));
+            portfolioListElement.appendChild(stockRow);
         });
     }
 
-    // Display stock information when stock is selected
-    function viewStock(symbol, stocks) {
-        const stockArea = document.querySelector('.stock-form');
-        if (stockArea) {
-            const stock = stocks.find(s => s.symbol == symbol);
-            if (stock) {
-                document.querySelector('#stockName').textContent = stock.name;
-                document.querySelector('#stockSector').textContent = stock.sector;
-                document.querySelector('#stockIndustry').textContent = stock.subIndustry;
-                document.querySelector('#stockAddress').textContent = stock.address;
-
-                document.querySelector('#logo').src = `logos/${symbol}.svg`; // Assuming logo files exist
-            }
-        }
+    // Display stock details in the StockDetails section
+    function showStockDetails(stock) {
+        stockLogo.src = stock.logo;
+        stockName.textContent = stock.name;
+        stockSector.textContent = stock.sector;
+        stockIndustry.textContent = stock.industry;
+        stockAddress.textContent = stock.address;
     }
+
+    // Initialize the dashboard
+    loadUserList();
 });
