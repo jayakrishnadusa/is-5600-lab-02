@@ -1,81 +1,152 @@
-<!DOCTYPE html>
-<html>
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+}
+h1, h2, h3 {
+  font-weight: 300;
+  color: white;
+}
+header {
+    background-color: #212221;
+    padding: 0.5em;
+}
+h1 { font-size: 1.5em;}
+h2 {
+  background-color: #1181B2;
+  padding: 0.5em;
+  font-size: 1.2em;
+  margin: 0;
+}
+h3 {
+    color: #212221;
+}
 
-<head>
-  <meta charset="utf-8" />
-  <title>Lab 02 | Stock Portfolio Dashboard</title>
+.grid-container {
+  display: grid;
+  grid-template-columns: 0.25fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "UserList Details";
+  grid-gap: 1em;
+}
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,400i,700" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+.user-list-container { grid-area: UserList; }
 
-  <script src="/data/users.js"></script>
-  <script src="/data/stocks-complete.js"></script>
-  <script src="/app.js"></script>
-</head>
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.user-list li {
+  padding: 0.5em;
+  cursor: pointer;
+}
 
-<body>
+.Details {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr 1.5fr;
+  grid-template-areas: "UserForm" "Portfolio";
+  grid-gap: 1em;
+  grid-area: Details;
+  background-color: white;
+}
 
-  <header>
-    <h1>Lab 02 | Stock Portfolio Dashboard</h1>
-  </header>
-  <main class="grid-container">
+.Portfolio {
+  display: grid;
+  grid-template-columns: 0.6fr 1.4fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "StockList StockDetails";
+  grid-area: Portfolio;
+  grid-gap: 1em;
+}
 
-    <section class="user-list-container">
-      <h2>Users</h2>
-      <ul class="user-list"></ul>
-    </section>
+.StockList { 
+    grid-area: StockList; 
+    background-color: white;
+  }
 
-    <section class="Details">
-      <div class="UserForm">
-        <h2>User Form</h2>
-        <form class="userEntry">
-          <input type=hidden id="userID" />
-          <label for="firstname">Name </label>
-          <input type=text id="firstname" class="one" />
-          <input type=text id="lastname" class="two" />
-          <label for="address">Address </label>
-          <input type=text id="address" class="one" />
-          <input type=text id="city" class="two" />
-          <label for="email">Email </label>
-          <input type=email id="email" class="both" />
-          <button class="one" id="btnSave">Save</button>
-          <button class="two" id="btnDelete">Delete</button>
-        </form>
-      </div>
-      <div class="Portfolio">
-        <div class="StockList">
-          <h2>Portfolio</h2>
-          <div class="portfolio-list">
-            <h3>Symbol</h3>
-            <h3># Shares</h3>
-            <h3>Actions</h3>
-          </div>
-        </div>
-        <div class="StockDetails">
-          <h2>Details</h2>
-          <div class="stock-form">
-            <div class="logoContainer">
-              <img id="logo" />
-            </div>
-            <p class="stockLabel">Name</p>
-            <p id="stockName"></p>
-            <p class="stockLabel">Sector</p>
-            <p id="stockSector"></p>
-            <p class="stockLabel">Industry</p>
-            <p id="stockIndustry"></p>
-            <p class="stockLabel">Address</p>
-            <p id="stockAddress"></p>
-          </div>
+.StockDetails { 
+    grid-area: StockDetails; 
+    background-color: white;
+  }
 
-        </div>
-      </div>
-
-    </section>
+.UserForm { 
+    grid-area: UserForm; 
+    background-color: white;
+}
 
 
-  </main>
+.userEntry {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  grid-auto-flow: row dense;
+  grid-gap: .8em;
+  background: #eee;
+  padding: 1.2em;
+}
+.userEntry > label  {
+  grid-column: 1;
+  grid-row: auto;
+}
+.userEntry > .one {
+  grid-column: 2;
+  grid-row: auto;
+  padding: 1em;
+  border: none;
+}
+.userEntry > .two {
+  grid-column: 3;
+  grid-row: auto;
+  padding: 1em;
+  border: none;
+} 
 
-</body>
+.userEntry > .both {
+  grid-column: 2 / 4;
+  grid-row: auto;
+  padding: 1em;
+  border: none;
+}  
 
-</html>
+button {
+    background-color: #44449B;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1em;
+    border: none;
+}
+button:hover {
+    color: #DDEDF4;
+    cursor: pointer;
+}
+
+
+.portfolio-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 0.25em;
+}
+
+
+.stock-form {
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr ;
+  grid-gap: 0.25em;      
+}
+
+.stockLabel {
+    font-weight: bold;
+}
+
+.logoContainer {
+  grid-column: 1 / span 2
+
+}
+
+#logo {
+padding: 0.5em;
+max-height: 200px;
+max-width: 400px;
+object-fit: cover;
+}
